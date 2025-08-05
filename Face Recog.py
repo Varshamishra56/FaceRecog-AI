@@ -22,7 +22,7 @@ def create_dataset(name, samples=50):
     while True:
         ret, frame = cap.read()
         if not ret:
-            print("⚠️ Cannot access webcam.")
+            print(" Cannot access webcam.")
             break
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -38,7 +38,7 @@ def create_dataset(name, samples=50):
             cv2.imshow("Capturing Faces", frame)
 
             if count >= samples:
-                print(f"✅ Collected {samples} face samples for {name}")
+                print(f" Collected {samples} face samples for {name}")
                 cap.release()
                 cv2.destroyAllWindows()
                 return
@@ -53,7 +53,7 @@ def create_embeddings():
     """
     Extracts FaceNet embeddings for all face images in dataset.
     """
-    print("📦 Creating embeddings...")
+    print(" Creating embeddings...")
     embeddings = {}
 
     for person in os.listdir(DATASET_DIR):
@@ -71,21 +71,21 @@ def create_embeddings():
                 print(f"❌ Skipped {img_name}: {e}")
 
     np.save("embeddings.npy", embeddings)
-    print("✅ Embeddings saved to embeddings.npy")
+    print(" Embeddings saved to embeddings.npy")
     return embeddings
 
 def recognize_faces(embeddings):
     """
     Starts webcam and identifies faces using DeepFace + cosine similarity.
     """
-    print("🔍 Starting real-time face recognition...")
+    print(" Starting real-time face recognition...")
     cap = cv2.VideoCapture(0)
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
     while True:
         ret, frame = cap.read()
         if not ret:
-            print("⚠️ Failed to capture frame.")
+            print("Failed to capture frame.")
             break
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -121,7 +121,7 @@ def recognize_faces(embeddings):
                 cv2.rectangle(frame, (x, y), (x+w, y+h), (0,0,255), 2)
 
             except Exception as e:
-                print("❌ Recognition error:", e)
+                print(" Recognition error:", e)
 
         cv2.imshow("Face Recognition", frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -130,9 +130,8 @@ def recognize_faces(embeddings):
     cap.release()
     cv2.destroyAllWindows()
 
-# ========== MAIN ==========
 if __name__ == "__main__":
-    print("📷 Face Recognition Menu")
+    print(" Face Recognition Menu")
     print("1. Create Face Dataset")
     print("2. Train & Save Embeddings")
     print("3. Recognize Faces (Real-time)")
@@ -150,7 +149,7 @@ if __name__ == "__main__":
             embeddings = np.load("embeddings.npy", allow_pickle=True).item()
             recognize_faces(embeddings)
         else:
-            print("⚠️ Please train the dataset first using option 2.")
+            print(" Please train the dataset first using option 2.")
 
     else:
-        print("❌ Invalid choice. Please enter 1, 2, or 3.")
+        print(" Invalid choice. Please enter 1, 2, or 3.")
